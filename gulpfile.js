@@ -2,8 +2,7 @@ const { src, dest, parallel, series, watch } = require('gulp')
 const browserSync = require('browser-sync').create()
 const concat = require('gulp-concat')
 const uglify = require('gulp-uglify-es').default
-const less = require('gulp-less')
-// const stylus = require('gulp-stylus')
+const sass = require('gulp-dart-sass')
 const autoprefixer = require('gulp-autoprefixer')
 const cleancss = require('gulp-clean-css')
 const imagemin = require('gulp-imagemin')
@@ -11,43 +10,46 @@ const newer = require('gulp-newer')
 const del = require('del')
 const pug = require('gulp-pug')
 const pugLinter = require('gulp-pug-linter')
-
 const eslint = require('gulp-eslint')
 const babel = require('gulp-babel')
 const terser = require('gulp-terser')
 const sourcemaps = require('gulp-sourcemaps')
 
+const WEB_URL = 'web_server/'
+const BUILD_URL = 'build/'
+const SOURCE_URL = 'src/'
+
 function pug2html() {
-  return src('src/pages/*.pug')
+  return src(SOURCE_URL + '/pages/*.pug')
     .pipe(pugLinter({ reporter: 'default', failAfterError: true }))
     .pipe(pug())
-    .pipe(dest('src/'))
+    .pipe(dest(WEB_URL))
   // failAfterError остановит сборку
 }
 
 function browsersync() {
   browserSync.init({
-    server: { baseDir: 'src/' },
+    server: { baseDir: WEB_URL },
     notify: false,
     online: true,
   })
 }
 
 function styles() {
-  return src('src/styles/main.less') // .styl
-    .pipe(less()) // .pipe(stylus())
+  return src(SOURCE_URL + 'styles/main.scss') 
+    .pipe(sass())
     .pipe(concat('app.min.css'))
     .pipe(autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true }))
     .pipe(cleancss({ level: { 1: { specialComments: 0 } } /* format: 'beautify' */ }))
-    .pipe(dest('src/styles/'))
+    .pipe(dest(WEB_URL + 'css/'))
     .pipe(browserSync.stream())
 }
 
 function images() {
-  return src('src/assets/src/**/*')
-    .pipe(newer('src/assets/dest/'))
+  return src(SOURCE_URL + 'assets/**/*')
+    .pipe(newer(WEB_URL + 'assets/'))
     .pipe(imagemin())
-    .pipe(dest('src/assets/dest/'))
+    .pipe(dest(WEB_URL + 'assets/'))
 }
 
 function cleanimg() {
@@ -56,38 +58,45 @@ function cleanimg() {
 
 function scripts() {
   // return src(['src/js/jquery-3.5.1.min.js', 'src/js/main.js'])
-  return src('src/js/main.js')
+  return src([SOURCE_URL + 'js/jquery-3.6.0.min.js', SOURCE_URL + 'js/main.js'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(sourcemaps.init())
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
+    .pipe(
+      babel({
+        presets: ['@babel/env'],
+      })
+    )
     .pipe(terser())
     .pipe(sourcemaps.write())
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(dest('src/js/'))
+    .pipe(dest(WEB_URL + 'js/'))
     .pipe(browserSync.stream())
 }
 
 function startWatch() {
-  watch('src/styles/**/*.less', styles) // 'app/style/**/*.styl'
-  watch(['src/**/*.js', '!src/**/*.min.js'], scripts)
+  watch(SOURCE_URL + 'styles/**/*.scss', styles)
+  watch([SOURCE_URL + '**/*.js', '!' + SOURCE_URL + '**/*.min.js'], scripts)
   // watch('src/**/*.html').on('change', browserSync.reload)
-  watch('src/**/*.pug', pug2html).on('change', browserSync.reload)
-  watch('src/assets/src/**/*', images)
+  watch(SOURCE_URL + 'pages/**/*.pug', pug2html).on('change', browserSync.reload)
+  watch(SOURCE_URL + 'assets/src/**/*', images)
 }
 
 function buildcopy() {
   return src(
-    ['src/css/**/*.min.css', 'src/js/**/*.min.js', 'src/assets/dest/**/*', 'src/**/*.html'],
-    { base: 'src' }
-  ).pipe(dest('build'))
+    [
+      WEB_URL + 'css/**/*.min.css',
+      WEB_URL + 'js/**/*.min.js',
+      WEB_URL + 'assets/**/*',
+      WEB_URL + '**/*.html',
+    ],
+    { base: WEB_URL }
+  ).pipe(dest(BUILD_URL))
 }
 
-function cleandist() {
-  return del('build/**/*', { force: true })
+function cleanbuild() {
+  return del(BUILD_URL + '**/*', { force: true })
 }
 
 exports.browsersync = browsersync
@@ -97,6 +106,7 @@ exports.cleanimg = cleanimg // удалим все картинки
 exports.scripts = scripts
 exports.buildcopy = buildcopy
 exports.pug2html = pug2html
+exports.cleanbuild = cleanbuild
 
 exports.default = parallel(pug2html, styles, scripts, browsersync, startWatch)
-exports.build = series(cleandist, styles, scripts, images, buildcopy)
+exports.build = series(cleanbuild, styles, scripts, images, buildcopy)

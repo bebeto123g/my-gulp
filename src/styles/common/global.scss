@@ -1,0 +1,9 @@
+@import '../helpers/variables.scss';
+
+body {
+  display: grid;
+  min-height: 100vh;
+  width: 100%;
+  background: $base_color;
+  margin: 0;
+}

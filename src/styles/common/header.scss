@@ -1,0 +1,7 @@
+.page__header {
+  font-size: 80px;
+  transition: 3s;
+  &.active {
+    font-size: 40px;
+  }
+}
