@@ -1,0 +1,1 @@
+body{display:-ms-grid;display:grid;min-height:100vh;width:100%;background:brown;margin:0}body .page__header{font-size:80px}body .page__header.active{font-size:40px}
