@@ -123,3 +123,17 @@ exports.build = series(cleandist, styles, scripts, images, buildcopy);
 
 // Экспортируем дефолтный таск с нужным набором функций
 exports.default = parallel(styles, scripts, browsersync, startwatch);
+
+
+
+// TODO еще полезные плагины
+// gulp-file-include – позволяет подключать ваши html файлы как если бы вы работали с PHP
+// gulp-htmlmin – минификация HTML файлов
+// gulp-webp – конвертация JPG/PNG изображений в WEBP с настройкой качества изображения
+// gulp-clone – позволяет сохранить исходное изображение JPG/PNG и перенести его в папку проекта для использования в браузерах без поддержки WEBP
+// Pug — парсит Pug-код в HTML. Pug — это шаблонизатор для HTML, что то вроде препроцессоров для CSS, позволяет писать меньше кода
+// Babel — превращает новый ECMAScript в старый
+
+// Вспомогательные библиотеки, которые тоже нужно установить
+// babel/core
+// babe/preset-env
