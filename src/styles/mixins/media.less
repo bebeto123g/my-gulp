@@ -1,0 +1,65 @@
+@import url('../helpers/variables.less');
+
+.media-tablet-mixin(@rules) {
+  @media (min-width: @mediaWidthTablet) {
+    @rules();
+  }
+}
+
+.media-tablet-horizontal-mixin(@rules) {
+  @media (min-width: @mediaWidthTabletHorizontal) {
+    @rules();
+  }
+}
+
+.media-laptop-mixin(@rules) {
+  @media (min-width: @mediaWidthLaptop) {
+    @rules();
+  }
+}
+
+
+
+
+// // Mode: Tablet
+// @tablet-area: 750px;
+
+// .tablet(@rules) {
+//   @media (min-width: 768px) { @rules(); }
+// }
+
+// // Mode: Desktop
+// @desktop-area: 970px;
+
+// .desktop(@rules) {
+//   @media (min-width: 1024px) { @rules(); }
+// }
+
+// // Area site
+// .area {
+//   margin-left: auto;
+//   margin-right: auto;
+
+//   .tablet ({
+//     width: @tablet-area;
+//   });
+
+//   .desktop ({
+//     width: @desktop-area;
+//   });
+// }
+
+// .retina(@rules) {
+//   @media only screen and (min-device-pixel-ratio: 2),
+//          only screen and (min-resolution: 192dpi) {
+//     @rules();
+//   }
+// }
+
+// .brand {
+//   background-image: url("images/brand.png");
+
+//   .retina ({
+//     background-image: url("images/brand@2x.png");
+//   });
+// }
