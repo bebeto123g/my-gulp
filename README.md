@@ -1,3 +1,3 @@
-# gulp_start
+# GULP 2021
 
-# my build gulp
+## [PUG, SASS, JS, ESLint, Babel, ImageMin]
